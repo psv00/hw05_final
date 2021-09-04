@@ -17,9 +17,9 @@
         Дата публикации: {{ post.pub_date|date:"d E Y" }}
       </li>
     </ul>
-    {% cache 20 index_page request.user.username %}
+   
     <p>{{ post.text }}</p>
-    {% endcache %} 
+     
     <p>{% thumbnail post.image "380x220" crop="center" upscale=True as im %}
         <img class="card-img my-2" src="{{ im.url }}">
     {% endthumbnail %}</p>
