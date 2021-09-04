@@ -93,6 +93,6 @@ class PostsURLTests(TestCase):
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND.value)
 
     def test_comment_url_exists_at_desired_location(self):
-        """Страница Коммент только для авториз / доступна любому пользователю."""
+        """Страница Коммент только для авториз / доступна любому."""
         response = self.guest_client.get('/posts/1/comment/')
         self.assertEqual(response.status_code, 404)
