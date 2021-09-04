@@ -1,0 +1,33 @@
+﻿{% extends "base.html" %}
+{% load thumbnail %}
+{% load cache %}
+{% block title %}
+Подписота
+{% endblock %}
+{% block content %}
+
+{% if user.is_authenticated %}
+  {% for post in page_obj %}
+    <ul>
+      <li>
+        <a href="{% url 'posts:profile' post.author.username %}"> Автор: {{ post.author }}</a>
+      </li>
+      <li>
+        Дата публикации: {{ post.pub_date|date:"d E Y" }}
+      </li>
+    </ul>
+    <p>{{ post.text }}</p>
+    <p>{% thumbnail post.image "380x220" crop="center" upscale=True as im %}
+        <img class="card-img my-2" src="{{ im.url }}">
+    {% endthumbnail %}</p>
+{% cache 20 index_page request.user.username %}
+    {% if post.group %}
+      <a href="{% url 'posts:group_posts' post.group.slug %}"> Все записи группы: {{post.group.title}}</a> 
+    {% endif %} 
+{% endcache %}
+  {% if not forloop.last %}<hr>{% endif %}
+  {% endfor %}
+  {% include 'posts/includes/paginator.html' %} 
+{% endif %}
+
+{% endblock %} 
