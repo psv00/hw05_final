@@ -4,8 +4,10 @@ from .models import User, Post, Group, Comment, Follow
 from django.shortcuts import get_object_or_404, render, redirect
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_page
 
 
+@cache_page(60 * 20)
 def index(request):
     post_list = Post.objects.all()
     paginator = Paginator(post_list, settings.PAGINATOR_PER_PAGE)
