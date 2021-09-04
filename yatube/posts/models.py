@@ -1,8 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from core.models import CreatedModel
 
-#class Post(CreatedModel):
 User = get_user_model()
 
 
@@ -100,6 +98,5 @@ class Follow(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='following'
     )
-    db_constraint=False
-    def __str__(self) -> str:
-        return self.title
+
+    db_constraint = False

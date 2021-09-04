@@ -1,15 +1,10 @@
 from django.contrib.auth import get_user_model
-from django.test import Client, TestCase, override_settings
+from django.test import Client, TestCase
 from django.urls import reverse
-from posts.models import Post, Group, Comment, Follow
+from posts.models import Post, Group, Comment
 from django import forms
 from django.core.cache import cache
-import shutil
-import tempfile
-from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
-all = ('UploadedFile', 'TemporaryUploadedFile', 'InMemoryUploadedFile',
-           'SimpleUploadedFile')
 
 
 User = get_user_model()
@@ -355,9 +350,10 @@ class TestCommentsAdded(TestCase):
 
     def test_comment_added_to_post(self):
         """Комменты мутятся, хейтеры рады"""
-        response = self.authorized_client.get(reverse('posts:post_detail', kwargs={
-                 'post_id': self.post.id
-            }))
+        response = self.authorized_client.get(
+            reverse('posts:post_detail', kwargs={
+                    'post_id': self.post.id
+                    }))
         first_object = response.context['posts'].comments
 
         self.assertEqual(first_object, self.post.comments)
@@ -401,7 +397,7 @@ class CacheTest(TestCase):
         self.assertNotEquals(posts_all2, posts_all)
 
 
-#class FollowTest(TestCase):
+# class FollowTest(TestCase):
 #    @classmethod
 #   def setUpClass(cls):
 #        super().setUpClass()
@@ -409,14 +405,14 @@ class CacheTest(TestCase):
 #        cls.post = Post.objects.create(
 #            text='пост',
 #            author=cls.author,
- #       )
+#   )
 
 
 #    def setUp(self):
 #        self.guest_client = Client()
 #        self.authorized_client = Client()
 #        self.authorized_client.force_login(self.author)
-##        self.post = FollowTest.post
+#        self.post = FollowTest.post
 #   def test_follow_context(self):
 #       """Проверка работы подписок."""
 #
