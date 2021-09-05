@@ -5,10 +5,10 @@
 {% endblock %}
 {% block content %}
 {% load cache %}
-{% cache 20 index_page response.content %}
+{% cache 20 index_page %}
 {% include 'posts/includes/switcher.html' %}
 
-{% if user.is_authenticated %}
+
   {% for post in page_obj %}
     <ul>
       <li>
@@ -31,6 +31,6 @@
   {% if not forloop.last %}<hr>{% endif %}
   {% endfor %}
   {% include 'posts/includes/paginator.html' %} 
-{% endif %}
+
 {% endcache %}
 {% endblock %} 
