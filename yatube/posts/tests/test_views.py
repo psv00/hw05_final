@@ -397,26 +397,32 @@ class CacheTest(TestCase):
         self.assertNotEquals(posts_all2, posts_all)
 
 
-# class FollowTest(TestCase):
-#    @classmethod
-#   def setUpClass(cls):
-#        super().setUpClass()
-#       cls.author = User.objects.create_user('Mask')
-#        cls.post = Post.objects.create(
-#            text='пост',
-#            author=cls.author,
-#   )
+class FollowTest(TestCase):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.author = User.objects.create_user('Mask')
+        cls.post = Post.objects.create(
+            text='пост',
+            author=cls.author,)
 
+    def setUp(self):
+        self.guest_client = Client()
+        self.authorized_client = Client()
+        self.authorized_client.force_login(self.author)
+        self.post = FollowTest.post
 
-#    def setUp(self):
-#        self.guest_client = Client()
-#        self.authorized_client = Client()
-#        self.authorized_client.force_login(self.author)
-#        self.post = FollowTest.post
-#   def test_follow_context(self):
-#       """Проверка работы подписок."""
-#
-#       response = self.authorized_client.get(reverse('posts:follow_index'))
-#      first_object = response.context['post_list'][0]
-#      a_0 = first_object.author
-#      self.assertEqual(a_0, self.post.author)
+    def test_follow_context(self):
+        """Проверка работы подписок."""
+        response = self.authorized_client.get(reverse('posts:index'))
+        first_object = response.context['page_obj'][0]
+        first_text = first_object.text
+        self.assertEqual(first_text, self.post.text)
+
+#    def test_follow_context_1(self):
+#        """Проверка работы подписок."""
+#        response = self.authorized_client.get(
+# reverse('posts:profile', args=['Musk']))
+#        first_object = response.context['page_obj'][0]
+#        task_text = first_object.text
+#        self.assertEqual(task_text, self.post.text)
