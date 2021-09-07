@@ -5,7 +5,6 @@
 Подписота
 {% endblock %}
 {% block content %}
-
 {% if user.is_authenticated %}
   {% for post in page_obj %}
     <ul>
@@ -20,14 +19,13 @@
     <p>{% thumbnail post.image "380x220" crop="center" upscale=True as im %}
         <img class="card-img my-2" src="{{ im.url }}">
     {% endthumbnail %}</p>
-{% cache 20 index_page request.user.username %}
+    {% cache 20 index_page request.user.username %}
     {% if post.group %}
       <a href="{% url 'posts:group_posts' post.group.slug %}"> Все записи группы: {{post.group.title}}</a> 
     {% endif %} 
-{% endcache %}
-  {% if not forloop.last %}<hr>{% endif %}
-  {% endfor %}
-  {% include 'posts/includes/paginator.html' %} 
-{% endif %}
-
+    {% endcache %}
+    {% if not forloop.last %}<hr>{% endif %}
+    {% endfor %}
+    {% include 'posts/includes/paginator.html' %} 
+  {% endif %}
 {% endblock %} 

@@ -93,10 +93,10 @@ class Comment(models.Model):
 
 class Follow(models.Model):
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='follower'
+        User, on_delete=models.CASCADE, related_name='follower',
+        db_constraint=False
     )
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='following'
+        User, on_delete=models.CASCADE, related_name='following',
+        db_constraint=False
     )
-
-    db_constraint = False

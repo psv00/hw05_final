@@ -1,5 +1,5 @@
 from posts.forms import PostForm
-from posts.models import User, Post, Group
+from posts.models import User, Post, Group, Comment
 from django.test import Client, TestCase
 from django.urls import reverse
 
@@ -94,3 +94,51 @@ class SuccessFormsTestEd(TestCase):
         self.assertRedirects(response_auth_ed, reverse(
             ('posts:profile'), kwargs={'username': 'pedro'})
         )
+
+
+class TestCommentCreate(TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.group = Group.objects.create(
+            title='Тест групп',
+            slug='test-slug',
+            description='Тест описания',
+        )
+        cls.post = Post.objects.create(
+            text='Текст',
+            author=User.objects.create_user(username='author_user'),
+
+        )
+        cls.comment = Comment.objects.create(
+            post=cls.post,
+            author=User.objects.create_user(username='author_hater'),
+            text='текст',
+        )
+
+        cls.form = PostForm()
+
+    def setUp(self):
+        self.guest_client = Client()
+        self.user = User.objects.create_user(username='pedro')
+        self.authorized_client = Client()
+        self.authorized_client.force_login(self.user)
+
+    def test_create_comment(self):
+        """Тест формы комментариев"""
+        counter_hater = Comment.objects.count()
+        form_data = {
+            'text': 'Тестовый текст',
+        }
+
+        response_guest = self.guest_client.post(
+            reverse('posts:add_comment', kwargs={'post_id': self.post.id}),
+            data=form_data,
+            follow=True
+        )
+        self.assertRedirects(
+            response_guest, '/auth/login/?next=%2Fposts%2F1%2Fcomment'
+        )
+
+        self.assertEqual(Comment.objects.count(), counter_hater)

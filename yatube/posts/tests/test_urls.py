@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase, Client
-from posts.models import Post, Group
+from posts.models import Post, Group, Follow
 from http import HTTPStatus
 
 
@@ -50,7 +50,10 @@ class PostsURLTests(TestCase):
             author=User.objects.create_user(username='author_user'),
             group=cls.group
         )
-
+        cls.follow = Follow.objects.create(
+            user=User.objects.create_user(username='user'),
+            author=User.objects.create_user(username='author')
+        )
     def setUp(self):
         self.guest_client = Client()
         self.user = User.objects.create_user(username='KukuKu')
@@ -96,3 +99,17 @@ class PostsURLTests(TestCase):
         """Страница Коммент только для авториз / доступна любому."""
         response = self.guest_client.get('/posts/1/comment/')
         self.assertEqual(response.status_code, 404)
+
+    def test_comment_url_follow(self):
+        """Кнопка подписки сработала."""
+        response = self.authorized_client.get('/profile/KukuKu/follow/')
+        self.assertRedirects(
+            response, '/profile/KukuKu/'
+        )
+
+    def test_comment_url_follow(self):
+        """Кнопка подписки сработала."""
+        response = self.authorized_client.get('/profile/author/unfollow/')
+        self.assertRedirects(
+            response, '/profile/author/'
+        )

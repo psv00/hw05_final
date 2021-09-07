@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
-from posts.models import Post, Group, Comment
+from posts.models import Post, Group, Comment, Follow
 from django import forms
 from django.core.cache import cache
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -33,12 +33,10 @@ class PostsViewsTests(TestCase):
         self.user = User.objects.create_user(username='author_user2')
         self.authorized_client = Client()
         self.authorized_client.force_login(self.user)
-    # Проверяем используемые шаблоны
 
     def test_pages_uses_correct_template(self):
         cache.clear()
         """URL-адрес использует соответствующий шаблон."""
-        # Собираем в словарь пары "имя_html_шаблона: reverse(name)"
         templates_pages_names = {
             'posts/index.html': reverse('posts:index'),
             'posts/group_list.html': reverse(
@@ -90,6 +88,13 @@ class PostsPagesTests(TestCase):
         self.assertEqual(text_0, 'Текст')
         self.assertEqual(author_0, 'author_user')
 
+    def check_post_data(self, post):
+        self.post = post
+        self.assertEqual(self.post.text, PostsPagesTests.post.text)
+        self.assertEqual(
+            self.post.author.username, PostsPagesTests.post.author.username
+        )
+
     def test_context_group(self):
         """Шаблон посты сформирован с правильным контекстом."""
         response = self.authorized_client.get(reverse(
@@ -97,12 +102,9 @@ class PostsPagesTests(TestCase):
         )
         first_object = response.context['page_obj'][0]
         first_object2 = response.context['group']
-        text_0 = first_object.text
         title_0 = first_object2.title
-        author_0 = first_object.author.username
-        self.assertEqual(text_0, 'Текст')
-        self.assertEqual(author_0, 'author_user')
         self.assertEqual(title_0, 'Тест групп')
+        self.check_post_data(first_object)
 
     def test_context_profile(self):
         """Шаблон профайл сформирован с правильным контекстом."""
@@ -272,16 +274,21 @@ class ViewsTestImages(TestCase):
 
         self.group = ViewsTestImages.group
 
+    def check_post_data(self, post):
+        self.post = post
+        self.assertEqual(self.post.text, ViewsTestImages.post.text)
+        self.assertEqual(
+            self.post.author.username, ViewsTestImages.post.author.username
+        )
+        self.assertEqual(
+            self.post.image, ViewsTestImages.post.image
+        )
+
     def test_index_correct_context_usage(self):
         """Шаблон index.html сформирован с правильным контекстом."""
         response = self.authorized_client.get(reverse('posts:index'))
         first_object = response.context['page_obj'][0]
-        text_obj_0 = first_object.text
-        author_obj_0 = first_object.author.username
-        post_image_0 = first_object.image
-        self.assertEqual(text_obj_0, self.post.text)
-        self.assertEqual(author_obj_0, self.author.username)
-        self.assertEqual(post_image_0, self.post.image)
+        self.check_post_data(first_object)
 
     def test_group_page_correct_context_usage(self):
         """Шаблон group.html сформирован с правильным контекстом."""
@@ -401,28 +408,32 @@ class FollowTest(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.author = User.objects.create_user('Mask')
+        cls.user = User.objects.create_user(username='Pedro')
+        cls.group = Group.objects.create(
+            title='Текст',
+            description='описание',
+            slug='slug')
         cls.post = Post.objects.create(
-            text='пост',
-            author=cls.author,)
+            text='Текст',
+            pub_date=Post.pub_date,
+            author=cls.user,
+            group=cls.group)
 
     def setUp(self):
         self.guest_client = Client()
         self.authorized_client = Client()
-        self.authorized_client.force_login(self.author)
+        self.authorized_client.force_login(self.user)
         self.post = FollowTest.post
 
-    def test_follow_context(self):
-        """Проверка работы подписок."""
-        response = self.authorized_client.get(reverse('posts:index'))
-        first_object = response.context['page_obj'][0]
-        first_text = first_object.text
-        self.assertEqual(first_text, self.post.text)
-
-#    def test_follow_context_1(self):
-#        """Проверка работы подписок."""
-#        response = self.authorized_client.get(
-# reverse('posts:profile', args=['Musk']))
-#        first_object = response.context['page_obj'][0]
-#        task_text = first_object.text
-#        self.assertEqual(task_text, self.post.text)
+    def test_follow_process(self):
+        """Тест подписки."""
+        user = User.objects.create_user(username='Hater')
+        counter_0 = Follow.objects.count()
+        self.authorized_client.get(
+            reverse('posts:profile_follow', args={user, })
+        )
+        counter = Follow.objects.count()
+        self.assertEqual(counter_0 + 1, counter)
+        follower = Follow.objects.first()
+        self.assertEqual(follower.author, user)
+        self.assertEqual(follower.user, self.user)
