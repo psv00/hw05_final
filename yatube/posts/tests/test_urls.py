@@ -54,6 +54,7 @@ class PostsURLTests(TestCase):
             user=User.objects.create_user(username='user'),
             author=User.objects.create_user(username='author')
         )
+
     def setUp(self):
         self.guest_client = Client()
         self.user = User.objects.create_user(username='KukuKu')
