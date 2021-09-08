@@ -2,6 +2,7 @@
 {% load static %} 
 {% load thumbnail %}
 {%block content%}
+ 
     <main>
       <div class="container py-5">
         <div class="row justify-content-center">
@@ -28,8 +29,10 @@
                     {% endfor %}
                   {% endif %}        
                   <div class="form-group row my-3 p-3">
-                    <label for="id_text">
-                      Текст поста                  
+                    <label for="{id_text}">
+                      текст текстовый  
+                      
+                      
                       <span class="required text-danger" >*</span>                  
                     </label>
                     <textarea name="text" cols="40" rows="10" class="form-control" required id="id_text">

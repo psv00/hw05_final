@@ -425,7 +425,7 @@ class FollowTest(TestCase):
         self.authorized_client.force_login(self.user)
         self.post = FollowTest.post
 
-    def test_follow_process(self):
+    def test_follow(self):
         """Тест подписки."""
         user = User.objects.create_user(username='Hater')
         counter_0 = Follow.objects.count()
@@ -437,3 +437,16 @@ class FollowTest(TestCase):
         follower = Follow.objects.first()
         self.assertEqual(follower.author, user)
         self.assertEqual(follower.user, self.user)
+
+    def test_unfollow(self):
+        """Тест отписки."""
+        Follow.objects.create(
+            author=self.user, user=self.user
+        )
+        counter_0 = Follow.objects.count()
+
+        self.authorized_client.get(
+            reverse('posts:profile_unfollow', args=(self.user,))
+        )
+        counter_1 = Follow.objects.count()
+        self.assertEqual(counter_0, counter_1 + 1)

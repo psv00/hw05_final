@@ -6,7 +6,7 @@ from ..models import Group, Post
 User = get_user_model()
 
 
-class PostModelTestpost(TestCase):
+class ModelTestpost(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -23,12 +23,12 @@ class PostModelTestpost(TestCase):
 
     def test_models_have_correct_object_names_post(self):
         """Проверяем, что у моделей корректно работает __str__."""
-        post = PostModelTestpost.post
+        post = ModelTestpost.post
         expected_object_name = post.text[:15]
         self.assertEqual(expected_object_name, str(post))
 
 
-class PostModelTestgroup(TestCase):
+class ModelTestgroup(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -38,13 +38,9 @@ class PostModelTestgroup(TestCase):
             slug='Тестовый слаг',
             description='Тестовое описание',
         )
-        cls.post = Post.objects.create(
-            author=cls.user,
-            text='Тестовая группа',
-        )
 
     def test_models_have_correct_object_names_group(self):
         """Проверяем, что у моделей корректно работает __str__."""
-        group = PostModelTestgroup.group
+        group = ModelTestgroup.group
         expected_object_name = group.title
         self.assertEqual(expected_object_name, str(group))
