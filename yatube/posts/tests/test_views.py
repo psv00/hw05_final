@@ -309,12 +309,7 @@ class ViewsTestImages(TestCase):
                 'username': self.author.username})
         )
         first_object = response.context['page_obj'][0]
-        post_text_0 = first_object.text
-        post_author_0 = first_object.author.username
-        post_image_0 = first_object.image
-        self.assertEqual(post_text_0, self.post.text)
-        self.assertEqual(post_author_0, self.author.username)
-        self.assertEqual(post_image_0, self.post.image)
+        self.check_post_data(first_object)
 
     def test_1_page_correct_context(self):
         """Шаблон post.html сформирован с правильным контекстом."""
@@ -322,11 +317,8 @@ class ViewsTestImages(TestCase):
             reverse(
                 'posts:post_detail', kwargs={'post_id': self.post.id})
         )
-        self.assertEqual(response.context['posts'].text, self.post.text)
-        self.assertEqual(
-            response.context['posts'].author.username, self.author.username
-        )
-        self.assertEqual(response.context['posts'].image, self.post.image)
+        first_object = response.context['posts']
+        self.check_post_data(first_object)
 
 
 class TestCommentsAdded(TestCase):

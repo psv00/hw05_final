@@ -9,7 +9,7 @@ class Post(models.Model):
     text = models.TextField(
         max_length=200,
         help_text='200 символов max',
-        verbose_name='Текстхуев',
+        verbose_name='Текст',
     )
     pub_date = models.DateTimeField(
         auto_now_add=True,
@@ -101,7 +101,10 @@ class Follow(models.Model):
     )
 
     class Meta:
-        UniqueConstraint(fields=['author', 'user'], name='unique_names')
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'user'], name='unique_names'),
+        ]
 
     def __str__(self) -> str:
-        return self.author
+        return '{self.user} подписан на {self.author}'
