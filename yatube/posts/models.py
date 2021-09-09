@@ -102,8 +102,8 @@ class Follow(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['author', 'user'], name='unique_names'),
+                fields=('author', 'user'), name='unique_names'),
         ]
 
     def __str__(self) -> str:
-        return '{self.user} подписан на {self.author}'
+        return f'{self.user} подписан на {self.author}'
