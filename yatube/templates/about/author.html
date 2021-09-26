@@ -1,12 +1,16 @@
 {% extends "base.html" %}
-{% block title %}Об авторе проекта{% endblock %}
+{% block title %} <p style="font:italic 50px bold "Times New Roman", Times, serif"> Об авторе проекта: </p>{% endblock %}
 {% block content %}
-<h1>Привет, я Савва</h1>
-<p>
-  <h3>Окончил аспирантуру УрФУ, выход на защиту дисcера оказался долгим и я решил подучить Python. Говорят дело нужное :D</h3>
-     <h2>Подумываю о смене специальности, но это не точно...</h2>
-        <h1> Важную роль в процессе обучения сыграла кошка. </h1>
-  {% load static %}
-  <img src="{% static 'img/kaska.png' %}" width="500" height="500" class="d-inline-block align-top" alt="">
-</p>
+    <h1>Привет, меня зовут Савва. Это мой первый проект на Яндекс.Практикум :)  </h1>
+    <p>
+    <h2>А еще я окончил аспирантуру ФТИ УрФУ.
+    <a href="https://science.urfu.ru/ru/persons/%D1%81%D0%B0%D0%B2%D0%B2%D0%B0-%D0%B2%D0%B8%D0%BA%D1%82%D0%BE%D1%80%D0%BE%D0%B2%D0%B8%D1%87-%D0%BF%D0%B0%D0%BD%D0%BA%D0%B8%D0%BD/publications/" >
+        клац</a> </h2>
+    <h2>Работал сервисным инженером по медицинскому оборудованию ЗАО "Дельрус"</h2>
+    <h2> И еще много всего делал :)
+    <a href="https://www.instagram.com/savvapankin/?hl=ru" >
+        клац</a> </h2>
+    {% load static %}
+    <img src="{% static 'img/kaska.png' %}" width="500" height="500" class="d-inline-block align-top" alt="">
+    </p>
 {% endblock %}

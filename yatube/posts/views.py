@@ -38,10 +38,11 @@ def profile(request, username):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     post_amount = posts.count()
-    following = Follow.objects.filter(
-        user=request.user.is_authenticated, author=user
-    ).exists()
-
+    if request.user.is_authenticated:
+        following = Follow.objects.filter(
+            user=request.user, author=user).exists()
+    else:
+        following = None
     context = {
         'posts': posts,
         'page_obj': page_obj,
@@ -66,18 +67,19 @@ def post_detail(request, post_id):
     return render(request, 'posts/post_detail.html', context)
 
 
-@login_required
 def post_create(request):
-    if request.method != 'POST':
+    template = 'posts/create_post.html'
+    if request.method == 'POST':
+        form = PostForm(request.POST or None,
+                        files=request.FILES or None)
+        if form.is_valid():
+            post_create = form.save(commit=False)
+            post_create.author = request.user
+            post_create.save()
+            return redirect('posts:profile', username=request.user.username)
+    else:
         form = PostForm()
-        return render(request, 'posts/create_post.html', {'form': form})
-    form = PostForm(request.POST)
-    if not form.is_valid():
-        return render(request, 'posts/create_post.html', {'form': form})
-    post = form.save(commit=False)
-    post.author = request.user
-    form.save()
-    return redirect('posts:profile', username=request.user.username)
+    return render(request, template, {'form': form, 'is_edit': False})
 
 
 @login_required

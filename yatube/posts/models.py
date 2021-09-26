@@ -87,9 +87,6 @@ class Comment(models.Model):
         verbose_name='Дата публикации'
     )
 
-    def __str__(self) -> str:
-        return self.title
-
 
 class Follow(models.Model):
     user = models.ForeignKey(
